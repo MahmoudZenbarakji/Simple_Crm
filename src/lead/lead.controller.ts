@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { LeadService } from './lead.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
+import { LeadsQueryDto } from './dto/get-leads-query.dto';
 
-@Controller('lead')
+@Controller('leads')
 export class LeadController {
   constructor(private readonly leadService: LeadService) {}
 
@@ -13,8 +14,8 @@ export class LeadController {
   }
 
   @Get()
-  findAll() {
-    return this.leadService.findAll();
+  findAll(@Query() query: LeadsQueryDto) {
+    return this.leadService.findAll(query);
   }
 
   @Get(':id')
