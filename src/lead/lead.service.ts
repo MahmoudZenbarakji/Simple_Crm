@@ -1,9 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { parse } from 'json2csv';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadsQueryDto } from './dto/get-leads-query.dto';
 import { Prisma } from '@prisma/client';
+
+const EXPORT_MAX_LIMIT = 10_000;
+const CSV_FIELDS = [
+  'id',
+  'name',
+  'email',
+  'phone',
+  'status',
+  'value',
+  'created_at',
+] as const;
 
 @Injectable()
 export class LeadService {
@@ -69,6 +81,41 @@ export class LeadService {
     const column = query.sortBy ?? 'created_at';
     const order = query.order ?? 'desc';
     return { [column]: order };
+  }
+
+  async exportToCsv(query: LeadsQueryDto): Promise<string> {
+    const limit = Math.min(
+      query.limit ?? EXPORT_MAX_LIMIT,
+      EXPORT_MAX_LIMIT,
+    );
+    const where = this.buildWhere(query);
+    const orderBy = this.buildOrderBy(query);
+
+    const rows = await this.prisma.lead.findMany({
+      where,
+      orderBy,
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        status: true,
+        value: true,
+        created_at: true,
+      },
+    });
+
+    const plainRows = rows.map((row) => ({
+      ...row,
+      value: row.value == null ? '' : Number(row.value),
+      created_at:
+        row.created_at instanceof Date
+          ? row.created_at.toISOString()
+          : row.created_at,
+    }));
+
+    return parse(plainRows, { fields: [...CSV_FIELDS] });
   }
 
   create(createLeadDto: CreateLeadDto) {
