@@ -1,58 +1,53 @@
 # AI-Assisted Development Summary
 
+## Development Context
 
+This document describes how AI tooling was used during the NestJS backend assessment for the Simple CRM project. The architecture, module boundaries, and API design were decided and owned manually. AI was used for implementation details and boilerplate; all generated code was reviewed, tested, and adjusted to fit the project before inclusion.
 
 ---
 
 ## 1. Database Schema Design
 
-**Representative prompt:**  
+**Representative prompt:**
+
 *"I have a CRM backend. I need a Prisma schema with User and Lead models. User: id, email (unique), hashed password, createdAt. Lead: id, name, email (unique), phone, status enum (NEW, CONTACTED, QUALIFIED, LOST), value (decimal), created_at. Use PostgreSQL."*
-
-
-
 
 ---
 
 ## 2. Seed Script
 
-**Representative prompt:**  
+**Representative prompt:**
+
 *"Create a Prisma seed script that: creates an admin user if not exists (email admin@example.com, password hashed with bcrypt), inserts 15 mock leads with different statuses, uses Prisma Client properly, avoids duplicate admin, uses async/await cleanly."*
-
-
-
-
 
 ---
 
 ## 3. Authentication Implementation
 
-**Representative prompts:**  
-- *"Generate a LoginDto for NestJS with class-validator: valid email, password min 8 chars, at least one uppercase and one number."*  
-- *"Generate a login method that finds user by email, compares password with bcrypt, throws UnauthorizedException for invalid credentials, returns JWT using JwtService."*  
-- *"Generate a clean JWT strategy for NestJS using passport-jwt: extract token from Authorization Bearer header, validate payload, return user object."*
+**Representative prompts:**
 
+- *"Generate a LoginDto for NestJS with class-validator: valid email, password min 8 chars, at least one uppercase and one number."*
+- *"Generate a login method that finds user by email, compares password with bcrypt, throws UnauthorizedException for invalid credentials, returns JWT using JwtService."*
+- *"Generate a clean JWT strategy for NestJS using passport-jwt: extract token from Authorization Bearer header, validate payload, return user object."*
 
 ---
 
 ## 4. Leads Listing (Pagination, Filtering, Sorting)
 
-**Representative prompt:**  
+**Representative prompt:**
+
 *"Generate a service method for GET /api/leads that supports: pagination (page, limit), dynamic filtering by name, email, phone, status, value, dynamic sorting by any column with order asc/desc. Use Prisma findMany. Query params from a DTO. Avoid SQL injection. Clean, readable code."*
-
-
 
 ---
 
 ## 5. CSV Export
 
-**Representative prompt:**  
+**Representative prompt:**
+
 *"Implement GET /api/leads/export in NestJS: protected by JWT guard, same filtering/pagination/sorting as list endpoint, convert to CSV with json2csv, set Content-Type and Content-Disposition for attachment filename leads.csv, return CSV response."*
-
-
-
-
 
 ---
 
+## General Approach
 
+AI was used as an implementation aid: to draft DTOs, service methods, and integration code based on clear, scoped prompts. The overall structure of the app (modules, controllers, guards, and how they connect) was designed and reviewed manually. Each AI-generated result was checked for correctness, security, and consistency with the rest of the codebase before being adopted. This file is provided for transparency as part of the assessment submission.
